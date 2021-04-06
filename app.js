@@ -1,16 +1,17 @@
 
-const profileDataArgs = process.argv.slice(2, process.argv.length);
+//requires a file system 
+const fs = require('fs');
+const generatePage = require("./src/page-template.js");
+//holds user command line arguments 
+const profileDataArgs = process.argv.slice(2);
 
-const printProfileData = profileDataArr => {
-    //This ... 
-    for(let i = 0; i < profileDataArr.length; i +=1) {
-        console.log(profileDataArr[i]);
-    }
+const [name, github] = profileDataArgs;
 
-    console.log("==================");
+const pageHTML = generatePage(name,github)
 
-    //is the same as this ... 
-    profileDataArr.forEach(profileItem => console.log(profileItem));
-};
+//fs files require three arguments name of file, data, and callback function
+fs.writeFile('./index.html', pageHTML, err => {
+    if (err) throw new Error(err);
 
-printProfileData(profileDataArgs);
+    console.log('Portfolio complete! Check out index.html to see the output!');
+});
