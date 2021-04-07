@@ -1,17 +1,7 @@
 const inquirer = require("inquirer");
-
-//requires a file system 
-const fs = require('fs');
 const generatePage = require("./src/page-template.js");
+const {writeFile, copyFile} = require('./utils/generate-site.js');
 
-// const pageHTML = generatePage(name,github)
-
-// //fs files require three arguments name of file, data, and callback function
-// fs.writeFile('./index.html', pageHTML, err => {
-//     if (err) throw new Error(err);
-
-//     console.log('Portfolio complete! Check out index.html to see the output!');
-// });
 const promptUser = () => {
     return inquirer.prompt([
         {
@@ -60,7 +50,6 @@ const promptUser = () => {
         }
     ]);
 };
-
 
 const promptProject = portfolioData => {
     //if theres no 'projects' array property create one 
@@ -143,17 +132,28 @@ const promptProject = portfolioData => {
     });
 };
 
+//ask user for information
 promptUser()
+    //capture the returning data 
     .then(promptProject)
+    //finished portfolio data 
     .then(portfolioData => {
-        const pageHTML = generatePage(portfolioData)
-
-        //fs files require three arguments name of file, data, and callback function
-        fs.writeFile('./index.html', pageHTML, err => {
-            if (err) throw new Error(err);
-
-            console.log('Portfolio complete! Check out index.html to see the output!');
-        });
-        // console.log(portfolioData);
+        //return generated page with HTML
+        return generatePage(portfolioData);
+    })
+    //pass page HTML  into writefile
+    .then(pageHTML => {
+        return writeFile(pageHTML);
+    })
+    .then(writeFileResponse => {
+        console.log(writeFileResponse);
+        return copyFile();
+    })
+    .then(copyFileResponse => {
+        console.log(copyFileResponse);
+    })
+    .catch(err => {
+        console.log(err);
     });
+    
     
